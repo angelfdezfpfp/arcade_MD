@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber-Arcade: Marketing Digital 0931</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap');
+        body {
+            font-family: 'Fira Code', monospace;
+            background-color: #0f172a; /* slate-900 */
+            color: #22d3ee; /* cyan-400 */
+            overflow-x: hidden;
+        }
+        .neon-border {
+            box-shadow: 0 0 10px #06b6d4, inset 0 0 10px #06b6d4;
+            border: 1px solid #22d3ee;
+        }
+        .neon-border-pink {
+            box-shadow: 0 0 10px #ec4899, inset 0 0 10px #ec4899;
+            border: 1px solid #f472b6;
+        }
+        .neon-text {
+            text-shadow: 0 0 8px #22d3ee;
+        }
+        .neon-text-red {
+            color: #ef4444;
+            text-shadow: 0 0 10px #ef4444;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="start-screen" class="w-full max-w-2xl text-center flex flex-col items-center justify-center space-y-8 glass-panel p-10 rounded-xl neon-border">
+        <h1 class="text-4xl md:text-5xl font-bold neon-text mb-2">EVALUACIÓN PROTOCOLO 0931</h1>
+        <h2 class="text-xl text-pink-400 tracking-widest mb-6">MÓDULO: MARKETING DIGITAL</h2>
+        <div class="text-slate-300 text-sm md:text-base space-y-4 mb-8 text-left bg-slate-800/50 p-6 rounded border border-slate-700">
+            <p>> CONECTANDO A TERMINAL...</p>
+            <p>> OBJETIVO: Superar 14 niveles técnicos (RA1 - RA7).</p>
+            <p>> REGLAS:</p>
+            <ul class="list-disc pl-6 text-cyan-200">
+                <li>20 segundos por nivel.</li>
+                <li>3 intentos (❤️) permitidos.</li>
+                <li>Si fallas o el tiempo expira, pierdes un intento.</li>
+            </ul>
+            <p class="text-pink-400 mt-4 animate-pulse">> ADVERTENCIA: Tres fallos resultarán en la rescisión del contrato (GAME OVER).</p>
+        </div>
+        <button id="btn-start" class="px-8 py-4 bg-cyan-900/30 hover:bg-cyan-800/50 text-cyan-300 font-bold text-xl rounded neon-border transition-all duration-300 transform hover:scale-105">
+            [ INICIAR SIMULACIÓN ]
+        </button>
+    </div>
+
+    <div id="game-screen" class="hidden w-full max-w-4xl flex flex-col h-full space-y-6">
+        
+        <div class="flex flex-col md:flex-row justify-between items-center glass-panel p-4 rounded neon-border space-y-4 md:space-y-0">
+            <div class="flex space-x-2 text-2xl" id="lives-container">
+                <span id="life-1">❤️</span>
+                <span id="life-2">❤️</span>
+                <span id="life-3">❤️</span>
+            </div>
+            <div class="text-xl font-bold neon-text" id="hud-module">NIVEL 1: REDES</div>
+            <div class="text-xl text-pink-400 font-bold">PTS: <span id="hud-score">0/14</span></div>
+        </div>
+
+        <div class="w-full bg-slate-800 h-4 rounded overflow-hidden neon-border">
+            <div id="timer-bar" class="bg-cyan-400 h-full w-full transition-all duration-1000 linear"></div>
+        </div>
+
+        <div class="glass-panel p-6 md:p-10 rounded neon-border flex-1 flex flex-col justify-center">
+            <h3 id="question-text" class="text-xl md:text-2xl text-white mb-8 leading-relaxed">¿Cargando pregunta...?</h3>
+            <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                </div>
+        </div>
+    </div>
+
+    <div id="feedback-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/90 backdrop-blur-sm p-4">
+        <div class="glass-panel neon-border-pink p-8 rounded-xl max-w-lg text-center space-y-6">
+            <h2 class="text-3xl font-bold text-pink-500">¡ERROR CRÍTICO!</h2>
+            <p id="feedback-justification" class="text-slate-200 text-lg"></p>
+            <button id="btn-continue" class="px-6 py-3 bg-pink-900/50 hover:bg-pink-800 text-pink-200 font-bold rounded neon-border-pink transition-all">
+                ACEPTAR Y CONTINUAR
+            </button>
+        </div>
+    </div>
+
+    <div id="end-screen" class="hidden w-full max-w-3xl glass-panel p-8 md:p-12 rounded-xl neon-border flex flex-col items-center text-center space-y-6">
+        <h1 id="end-title" class="text-5xl font-bold mb-2">BOLETÍN DE NOTAS</h1>
+        
+        <div class="text-6xl font-bold my-6 p-6 rounded-full border-4 border-cyan-400 shadow-[0_0_20px_#06b6d4] text-white">
+            <span id="final-grade">0.0</span><span class="text-2xl text-cyan-400">/10</span>
+        </div>
+
+        <div class="w-full text-left bg-slate-800 p-6 rounded neon-border mt-4">
+            <h3 class="text-xl text-pink-400 font-bold mb-4">INFORME ANALÍTICO (Resultados de Aprendizaje)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="text-green-400 font-bold mb-2">✓ DOMINADO:</h4>
+                    <ul id="list-strengths" class="list-disc pl-5 text-slate-300 text-sm space-y-1"></ul>
+                </div>
+                <div>
+                    <h4 class="text-red-400 font-bold mb-2">⚠ REQUIERE REPASO:</h4>
+                    <ul id="list-weaknesses" class="list-disc pl-5 text-slate-300 text-sm space-y-1"></ul>
+                </div>
+            </div>
+        </div>
+
+        <button id="btn-restart" class="mt-8 px-8 py-4 bg-cyan-900/30 hover:bg-cyan-800/50 text-cyan-300 font-bold text-xl rounded neon-border transition-all duration-300 hover:scale-105">
+            [ REINICIAR SISTEMA ]
+        </button>
+    </div>
+
+    <script>
+        // --- BASE DE DATOS DE PREGUNTAS (Estrictamente basadas en RA y CE del Módulo 0931) ---
+        const moduleTitles = {
+            1: "RA1: ACCESOS Y CONEXIONES",
+            2: "RA2: SERVICIOS Y PROTOCOLOS",
+            3: "RA3: GESTIÓN TELEMÁTICA",
+            4: "RA4: ESTRATEGIA DE INTERRELACIÓN",
+            5: "RA5: CONSTRUCCIÓN WEB",
+            6: "RA6: PLAN DE MARKETING",
+            7: "RA7: COMERCIO ELECTRÓNICO"
+        };
+
+        const questionsData = [
+            { ra: 1, text: "¿Cuál es la principal diferencia entre una Intranet y una Extranet empresarial? (CE 1.d)", options: ["La Intranet es pública y la Extranet privada.", "La Extranet permite el acceso controlado a usuarios externos autorizados (clientes/proveedores).", "La Intranet solo funciona mediante conexión Wi-Fi.", "No hay diferencia técnica, son sinónimos."], correct: 1, justification: "La Intranet es una red interna para empleados, mientras que la Extranet extiende parte de esa red a usuarios externos con permisos específicos." },
+            { ra: 1, text: "Para buscar un tipo de archivo específico (ej. PDF) sobre comercio electrónico en un buscador, ¿qué operador avanzado se utiliza? (CE 1.g)", options: ["site:pdf", "ext:pdf", "filetype:pdf", "inurl:pdf"], correct: 2, justification: "El operador 'filetype:' restringe los resultados de búsqueda exclusivamente a documentos con la extensión especificada." },
+            { ra: 2, text: "¿Qué protocolo se utiliza principalmente para la transferencia de archivos desde un equipo cliente a un servidor remoto? (CE 2.d)", options: ["HTTP", "SMTP", "FTP", "POP3"], correct: 2, justification: "FTP (File Transfer Protocol) es el protocolo estándar de red utilizado para la transferencia de archivos entre un cliente y un servidor." },
+            { ra: 2, text: "Al configurar un cliente de correo electrónico, ¿qué diferencia al protocolo IMAP del POP3? (CE 2.c)", options: ["IMAP sincroniza los correos con el servidor, mientras POP3 normalmente los descarga y borra del servidor.", "POP3 es exclusivo para correos con archivos adjuntos pesados.", "IMAP solo permite enviar correos, no recibirlos.", "No hay diferencia en la gestión de los mensajes entre ambos."], correct: 0, justification: "IMAP refleja el estado del servidor en múltiples dispositivos, mientras que POP3 está diseñado para descargar los mensajes a un único dispositivo local." },
+            { ra: 3, text: "¿Cuál es el formato estándar estructurado definido en España para la factura electrónica? (CE 3.a)", options: ["PDF/A", "Facturae (XML)", "DOCX", "HTML5"], correct: 1, justification: "Facturae es el formato XML estándar para la emisión de facturas electrónicas requeridas en la contratación pública y normativa española." },
+            { ra: 3, text: "¿Qué elemento criptográfico es indispensable para garantizar la identidad y no repudio al firmar un documento electrónico? (CE 3.c/d)", options: ["Una contraseña alfanumérica de 8 caracteres.", "Un certificado digital válido.", "Un software antivirus actualizado.", "Una red privada virtual (VPN)."], correct: 1, justification: "El certificado digital vincula unos datos de verificación de firma a la identidad del firmante, dotando a la firma electrónica de validez legal." },
+            { ra: 4, text: "En la gestión de la reputación online, ¿qué caracteriza a una crisis en redes sociales frente a una queja habitual? (CE 4.c)", options: ["Ocurre exclusivamente fuera del horario laboral.", "Solo se manifiesta en foros privados corporativos.", "Los usuarios no esperan respuesta rápida de la empresa.", "La viralidad y el impacto negativo a gran escala en la imagen de la marca."], correct: 3, justification: "Una crisis online escala rápidamente debido a la viralidad, amenazando la reputación global de la marca si no se gestiona adecuadamente." },
+            { ra: 4, text: "¿Qué formato de comunicación web se basa en la publicación cronológica inversa de artículos o posts, permitiendo habitualmente comentarios? (CE 4.e)", options: ["Wiki", "Blog", "Foro de discusión", "Plataforma P2P"], correct: 1, justification: "Los blogs organizan su contenido (entradas o posts) mostrando primero la información más reciente para fomentar la actualización constante." },
+            { ra: 5, text: "Al diseñar una página web corporativa, ¿qué lenguaje de marcado establece la estructura base del contenido? (CE 5.a)", options: ["JavaScript", "PHP", "HTML", "CSS"], correct: 2, justification: "HTML (HyperText Markup Language) es el código que se utiliza para estructurar y desplegar una página web y sus contenidos." },
+            { ra: 5, text: "¿Cuál de las siguientes opciones representa un Sistema de Gestión de Contenidos (CMS) ampliamente utilizado en el ámbito comercial? (CE 5.c)", options: ["FileZilla", "WordPress", "Google Chrome", "Microsoft Excel"], correct: 1, justification: "WordPress es el CMS más popular que permite crear y mantener páginas web y tiendas online (mediante plugins como WooCommerce) sin programar desde cero." },
+            { ra: 6, text: "¿Cuál es la principal diferencia entre las estrategias SEO y SEM en buscadores? (CE 6.d)", options: ["El SEO ofrece resultados garantizados en 24 horas y el SEM tarda meses.", "El SEM implica pago por anuncios patrocinados, mientras que el SEO busca el posicionamiento orgánico.", "El SEO solo se aplica a redes sociales y el SEM a webs corporativas.", "El SEM es gratuito y el SEO es estrictamente de pago por clic."], correct: 1, justification: "SEO optimiza la web para aparecer naturalmente en los buscadores, mientras que SEM consiste en pujar por palabras clave en plataformas de anuncios." },
+            { ra: 6, text: "Si una campaña publicitaria online genera 5.000€ de beneficio neto con una inversión de 1.000€, ¿cómo se denomina esta métrica de rentabilidad? (CE 6.b)", options: ["CTR (Click Through Rate)", "CPA (Coste por Adquisición)", "ROI (Retorno de Inversión)", "CPM (Coste por Mil impresiones)"], correct: 2, justification: "El ROI (Return On Investment) mide la ganancia o pérdida generada por una inversión en relación con la cantidad de dinero invertida." },
+            { ra: 7, text: "Un modelo de negocio en la red donde una empresa vende productos directamente al consumidor final se denomina: (CE 7.c)", options: ["B2B (Business to Business)", "B2C (Business to Consumer)", "C2C (Consumer to Consumer)", "P2P (Peer to Peer)"], correct: 1, justification: "B2C define la transacción comercial directa entre una empresa (Business) y el usuario final (Consumer), típico de tiendas online minoristas." },
+            { ra: 7, text: "En el contexto logístico de un e-commerce, ¿a qué se refiere el término 'logística inversa'? (CE 7.e)", options: ["A la gestión de envíos internacionales prioritarios.", "Al cobro anticipado antes del envío del paquete.", "A la distribución de productos digitales exclusivamente.", "Al proceso de gestión de devoluciones y retornos de productos hacia la empresa."], correct: 3, justification: "La logística inversa gestiona el flujo de bienes desde el consumidor de vuelta al punto de origen, vital para gestionar devoluciones en e-commerce." }
+        ];
+
+        // --- VARIABLES DE ESTADO ---
+        let currentQuestionIndex = 0;
+        let lives = 3;
+        let score = 0;
+        let timeLeft = 20;
+        let timerInterval;
+        let audioCtx;
+        let errorsByRA = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0};
+
+        // --- REFERENCIAS DOM ---
+        const screens = {
+            start: document.getElementById('start-screen'),
+            game: document.getElementById('game-screen'),
+            end: document.getElementById('end-screen')
+        };
+        const elements = {
+            hudModule: document.getElementById('hud-module'),
+            hudScore: document.getElementById('hud-score'),
+            timerBar: document.getElementById('timer-bar'),
+            qText: document.getElementById('question-text'),
+            optContainer: document.getElementById('options-container'),
+            modal: document.getElementById('feedback-modal'),
+            justification: document.getElementById('feedback-justification'),
+            btnContinue: document.getElementById('btn-continue'),
+            endTitle: document.getElementById('end-title'),
+            finalGrade: document.getElementById('final-grade'),
+            listStrengths: document.getElementById('list-strengths'),
+            listWeaknesses: document.getElementById('list-weaknesses')
+        };
+
+        // --- SISTEMA DE AUDIO (Vanilla JS AudioContext) ---
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            
+            gainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        const soundFX = {
+            correct: () => { playTone(880, 'square', 0.1); setTimeout(() => playTone(1100, 'square', 0.2), 100); },
+            wrong: () => { playTone(150, 'sawtooth', 0.4); },
+            tick: () => { playTone(1000, 'sine', 0.05, 0.05); }
+        };
+
+        // --- LOGÍCA DEL JUEGO ---
+        document.getElementById('btn-start').addEventListener('click', () => {
+            initAudio();
+            resetGame();
+            switchScreen('game');
+            loadQuestion();
+        });
+
+        document.getElementById('btn-restart').addEventListener('click', () => {
+            resetGame();
+            switchScreen('start');
+        });
+
+        elements.btnContinue.addEventListener('click', () => {
+            elements.modal.classList.add('hidden');
+            if (lives <= 0) {
+                endGame(false);
+            } else {
+                currentQuestionIndex++;
+                if (currentQuestionIndex >= questionsData.length) {
+                    endGame(true);
+                } else {
+                    loadQuestion();
+                }
+            }
+        });
+
+        function switchScreen(screenName) {
+            Object.values(screens).forEach(s => s.classList.add('hidden'));
+            screens[screenName].classList.remove('hidden');
+        }
+
+        function resetGame() {
+            currentQuestionIndex = 0;
+            lives = 3;
+            score = 0;
+            errorsByRA = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0};
+            updateHUD();
+        }
+
+        function updateHUD() {
+            elements.hudScore.textContent = `${score}/${questionsData.length}`;
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById(`life-${i}`).style.opacity = i <= lives ? '1' : '0.2';
+                document.getElementById(`life-${i}`).style.filter = i <= lives ? 'none' : 'grayscale(100%)';
+            }
+        }
+
+        function loadQuestion() {
+            const q = questionsData[currentQuestionIndex];
+            elements.hudModule.textContent = moduleTitles[q.ra];
+            elements.qText.textContent = q.text;
+            elements.optContainer.innerHTML = '';
+
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = "p-4 bg-slate-800 hover:bg-cyan-900 border border-slate-600 hover:border-cyan-400 rounded text-left text-sm md:text-base text-slate-200 transition-all cursor-pointer shadow-sm hover:shadow-[0_0_10px_#06b6d4]";
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(index);
+                elements.optContainer.appendChild(btn);
+            });
+
+            startTimer();
+            updateHUD();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 20;
+            elements.timerBar.style.width = '100%';
+            elements.timerBar.classList.remove('bg-red-500');
+            elements.timerBar.classList.add('bg-cyan-400');
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const percentage = (timeLeft / 20) * 100;
+                elements.timerBar.style.width = `${percentage}%`;
+
+                if (timeLeft <= 5 && timeLeft > 0) {
+                    elements.timerBar.classList.remove('bg-cyan-400');
+                    elements.timerBar.classList.add('bg-red-500');
+                    soundFX.tick();
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleFailure("TIEMPO AGOTADO. " + questionsData[currentQuestionIndex].justification);
+                }
+            }, 1000);
+        }
+
+        function checkAnswer(selectedIndex) {
+            clearInterval(timerInterval);
+            const q = questionsData[currentQuestionIndex];
+            
+            // Bloquear botones
+            Array.from(elements.optContainer.children).forEach(btn => btn.disabled = true);
+
+            if (selectedIndex === q.correct) {
+                soundFX.correct();
+                score++;
+                currentQuestionIndex++;
+                if (currentQuestionIndex >= questionsData.length) {
+                    endGame(true);
+                } else {
+                    setTimeout(loadQuestion, 500); // Pequeña pausa antes de la siguiente
+                }
+            } else {
+                handleFailure("RESPUESTA INCORRECTA. " + q.justification);
+            }
+        }
+
+        function handleFailure(message) {
+            soundFX.wrong();
+            lives--;
+            updateHUD();
+            
+            const currentRA = questionsData[currentQuestionIndex].ra;
+            errorsByRA[currentRA]++;
+
+            elements.justification.textContent = message;
+            elements.modal.classList.remove('hidden');
+        }
+
+        function endGame(won) {
+            switchScreen('end');
+            clearInterval(timerInterval);
+            
+            if (lives <= 0) {
+                elements.endTitle.textContent = "GAME OVER: CONTRATO RESCINDIDO";
+                elements.endTitle.className = "text-4xl md:text-5xl font-bold mb-2 neon-text-red";
+            } else {
+                elements.endTitle.textContent = "SIMULACIÓN COMPLETADA";
+                elements.endTitle.className = "text-4xl md:text-5xl font-bold mb-2 text-green-400 shadow-[0_0_10px_#4ade80]";
+            }
+
+            const grade = ((score / questionsData.length) * 10).toFixed(1);
+            elements.finalGrade.textContent = grade;
+            
+            // Cambiar color de nota según calificación
+            elements.finalGrade.parentElement.className = `text-6xl font-bold my-6 p-6 rounded-full border-4 shadow-[0_0_20px_currentColor] text-white ${grade >= 5 ? 'border-green-400 text-green-400' : 'border-red-500 text-red-500'}`;
+
+            // Generar informe de RAs
+            elements.listStrengths.innerHTML = '';
+            elements.listWeaknesses.innerHTML = '';
+
+            for (let ra = 1; ra <= 7; ra++) {
+                const li = document.createElement('li');
+                li.textContent = moduleTitles[ra];
+                if (errorsByRA[ra] === 0) {
+                    elements.listStrengths.appendChild(li);
+                } else {
+                    const span = document.createElement('span');
+                    span.className = "text-pink-400 ml-2";
+                    span.textContent = `(${errorsByRA[ra]} fallos)`;
+                    li.appendChild(span);
+                    elements.listWeaknesses.appendChild(li);
+                }
+            }
+
+            if (elements.listStrengths.children.length === 0) elements.listStrengths.innerHTML = "<li class='text-slate-500'>Ningún módulo dominado completamente.</li>";
+            if (elements.listWeaknesses.children.length === 0) elements.listWeaknesses.innerHTML = "<li class='text-slate-500'>¡Perfecto! Ningún fallo registrado.</li>";
+        }
+    </script>
+</body>
+</html>
